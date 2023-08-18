@@ -14,25 +14,37 @@ src_term = os.environ["YT_QUERY"]
 client = MongoClient(host=os.environ["DB_URI"])
 db = client.ytsc
 
-try:
-    db.create_collection(src_term+"vids",
-                         {
-                             "timeseries": {
-                                 "timeField": "publishedAt",
-                                 "granularity": "seconds"
-                             },
-                             "expireAfterSeconds": 86400
-                         }
-                         )
-    logging.debug("Created collection successfully")
-except Exception:
-    # do nothing
-    pass
 
-vids = db[src_term+"vids"]
+def create_collection():
+    global vids
+    try:
+        db.create_collection(src_term+"vids",
+                             {
+                                 "timeseries": {
+                                     "timeField": "publishedAt",
+                                     "granularity": "seconds"
+                                 },
+                                 "expireAfterSeconds": 86400
+                             }
+                             )
+        logging.debug("Created collection successfully")
+    except Exception:
+        # do nothing
+        pass
+
+    vids = db[src_term+"vids"]
+
+
+create_collection()
+
+doing = 0
+
+act = 1
 
 
 def exec_sche():
+    global doing
+    doing = 1
     ts = (datetime.now(timezone.utc) -
           timedelta(hours=1)).astimezone().isoformat()
 
@@ -54,7 +66,14 @@ def exec_sche():
         print(e)
         # do nothing
         pass
+    print("Finished exec")
     logging.info("Scheduled Insert Finished")
+    doing = 0
 
 
-# exec_sche()
+def exec_sche_urg():
+    global act
+    if act > 0:
+        act = act - 1
+        if doing == 0:
+            exec_sche()

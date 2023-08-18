@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>YTSync</title>
+    </head>
+    <body>
+        {% for each in out %}
+        <div>
+            {{ each["title"]}}
+            <br>
+            <img src='{{each["thumbnail"]}}' />  
+        </div>
+        {% endfor %}
+    </body>
+</html>
