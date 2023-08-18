@@ -12,7 +12,7 @@ load_dotenv()
 src_term = os.environ["YT_QUERY"]
 
 client = MongoClient(host=os.environ["DB_URI"])
-db = client.ytsc
+db = client.get_default_database()
 
 keys = map(lambda x: x.strip(), os.environ["API_KEY"].split(","))
 counter = 0

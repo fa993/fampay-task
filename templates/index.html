@@ -2,6 +2,10 @@
     <head>
         <title>YTSync</title>
         <style>
+            button {
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
             div {
                 text-align: center;
             }
@@ -17,31 +21,76 @@
     </head>
     <body>
         <div id="stats"></div>
-        <div id="upbutton"></div>
+        <div id="upbutton">
+            <button onclick="onUpButton()">Fetch More Recent</button>
+        </div>
         <div class="vids" id="allvids">
             {% for each in out %}
             {% include "vid.html" %}
             {% endfor %}
         </div>
-        <div id="downbutton"></div>
+        <div id="downbutton">
+            <button onclick="onDownButton()">Fetch less recent</button>
+        </div>
         <script type="text/javascript">
-            function populateStats() {
-                
-            }
+            arr = []
+            sdf = new Intl.DateTimeFormat('en-GB', { dateStyle:"short", timeStyle: 'long'})
+            
 
-            function createAndPutInDOM(arr) {
-                for(i in arr) {
-                    
+            function populateArr() {
+                ar = document.getElementsByClassName("video");
+                for(var i = 0; i < ar.length; i++) {
+                    let yt = {};
+                    yt.title = ar[i].getElementsByTagName("h2")[0].innerHTML.trim();
+                    yt.thu = ar[i].getElementsByTagName("img")[0].getAttribute("src").trim();
+                    yt.desc = ar[i].getElementsByClassName("desc")[0].innerHTML.trim();
+                    yt.publishedAt = ar[i].getElementsByClassName("pubAt")[0].innerHTML.trim();
+                    arr.push(yt);
                 }
             }
 
-            function onUpButton() {
+            function populateStats() {
+                asd = document.getElementById("stats");
+                asd.innerHTML = "All UTC time ";
+                dt  = new Date().toISOString().replace("T", " ").replace("Z", " ");
+                dt = dt.substring(0, dt.indexOf("."))
+                asd.innerHTML += "Current Timestamp: " + dt;
+                asd.innerHTML += " Most Recent Record Timestamp: ";
+                if(arr.length > 0) {
+                    asd.innerHTML += arr[0].publishedAt;
+                } else {
+                    asd.innerHTML += "-"
+                }
+                asd.innerHTML += " Least Recent Record Timestamp: ";
+                if(arr.length > 0) {
+                    asd.innerHTML += arr[arr.length - 1].publishedAt;
+                } else {
+                    asd.innerHTML += "-";
+                }
+            }
 
+            function createAndPutInDOM(ar, top=true) {
+                for(var i = 0; i < ar.length; i++) {
+
+                }
+                if(top) {
+                    arr.unshift(ar)
+                } else {
+                    arr.push(ar)
+                }
+            }
+
+            async function onUpButton() {
+                res = await fetch("/querydata?first=" + arr[0].publishedAt);
+                console.log(await res.text());
             }
 
             function onDownButton() {
 
             }
+
+            populateArr();
+            populateStats();
         </script>
     </body>
 </html>

@@ -11,7 +11,7 @@ load_dotenv()
 
 client = MongoClient(host=os.environ["DB_URI"])
 
-db = client.ytsc
+db = client.get_default_database()
 vids = db[poptask.src_term+"vids"]
 
 sched = BackgroundScheduler(daemon=True)
