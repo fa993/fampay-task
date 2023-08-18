@@ -1,5 +1,6 @@
 from flask import Flask, Response, json, request, render_template
 from pymongo import MongoClient
+from datetime import datetime, timezone
 import pymongo
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -40,6 +41,8 @@ def qdata():
             'publishedAt', pymongo.DESCENDING).limit(length))
         pass
     elif request.args.get("first") != None:
+        ts = parse(request.args.get("first"))
+        ts = ts.replace(tzinfo=timezone.utc)
         out = list(vids.find({"publishedAt": {"$gt": parse(request.args.get("first"))}}, {"_id": 0}).sort(
             'publishedAt', pymongo.DESCENDING).limit(length))
         pass

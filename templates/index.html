@@ -42,8 +42,8 @@
                 for(var i = 0; i < ar.length; i++) {
                     let yt = {};
                     yt.title = ar[i].getElementsByTagName("h2")[0].innerHTML.trim();
-                    yt.thu = ar[i].getElementsByTagName("img")[0].getAttribute("src").trim();
-                    yt.desc = ar[i].getElementsByClassName("desc")[0].innerHTML.trim();
+                    yt.thumbnail = ar[i].getElementsByTagName("img")[0].getAttribute("src").trim();
+                    yt.description = ar[i].getElementsByClassName("desc")[0].innerHTML.trim();
                     yt.publishedAt = ar[i].getElementsByClassName("pubAt")[0].innerHTML.trim();
                     arr.push(yt);
                 }
@@ -69,20 +69,33 @@
                 }
             }
 
-            function createAndPutInDOM(ar, top=true) {
-                for(var i = 0; i < ar.length; i++) {
+            function createEle(ari) {
+                topl = document.createElement("div")
+                topl.classList.add("video");
+                
+                title = document.createElement("h2")
+                title.innerHTML = ari.title;
+                topl.appendChild(title)
+                
+                imgt = document.createElement("img")
+                imgt.setAttribute("src", ari.thumbnail)
+                imgt.setAttribute("alt", "thumbnail")
+                imgt.setAttribute("width", "20%")
+                topl.appendChild(imgt);
 
-                }
-                if(top) {
-                    arr.unshift(ar)
-                } else {
-                    arr.push(ar)
-                }
             }
 
             async function onUpButton() {
                 res = await fetch("/querydata?first=" + arr[0].publishedAt);
-                console.log(await res.text());
+                jres = await res.json()
+                console.log(jres)
+                alls = document.getElementById("allvids");
+                for(var i = jres.length - 1; i > -1; i--) {
+                    ele = createEle(jres[i])
+                    alls.insertBefore(ele, alls.firstChild);
+                    arr.unshift(jres[i])
+                }
+                populateStats();
             }
 
             function onDownButton() {
