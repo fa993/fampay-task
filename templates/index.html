@@ -20,7 +20,12 @@
         </style>
     </head>
     <body>
+        <div>All times UTC</div>
         <div id="stats"></div>
+        <div>
+            <input type="text" id="changesearchterm" minlength="3"/>
+            <button type="submit" onclick="changeSearchTerm()">Change Search Term</button>
+        </div>
         <div id="upbutton">
             <button onclick="onUpButton()">Fetch More Recent</button>
         </div>
@@ -51,10 +56,9 @@
 
             function populateStats() {
                 asd = document.getElementById("stats");
-                asd.innerHTML = "All UTC time ";
                 dt  = new Date().toISOString().replace("T", " ").replace("Z", " ");
                 dt = dt.substring(0, dt.indexOf("."))
-                asd.innerHTML += "Current Timestamp: " + dt;
+                asd.innerHTML = "Last Fetched Timestamp: " + dt;
                 asd.innerHTML += " Most Recent Record Timestamp: ";
                 if(arr.length > 0) {
                     asd.innerHTML += arr[0].publishedAt;
@@ -69,7 +73,16 @@
                 }
             }
 
+            function sanitseAri(ari) {
+                dt = new Date(ari.publishedAt).toISOString().replace("T", " ").replace("Z", " ");
+                dt = dt.substring(0, dt.indexOf("."))
+                ari.publishedAt = dt;
+            }
+
             function createEle(ari) {
+
+                sanitseAri(ari)
+
                 topl = document.createElement("div")
                 topl.classList.add("video");
                 
@@ -85,6 +98,21 @@
 
                 outerp = document.createElement("p")
 
+                descl = document.createElement("h4")
+                descl.innerHTML = "Description:"
+                outerp.appendChild(descl)
+
+                descp = document.createElement("p")
+                descp.innerHTML = ari.description;
+                outerp.appendChild(descp)
+
+                publ = document.createElement("h4")
+                publ.innerHTML = "Published At:"
+                outerp.appendChild(publ)
+
+                pubp = document.createElement("p")
+                pubp.innerHTML = ari.publishedAt;
+                outerp.appendChild(pubp)
 
                 topl.appendChild(outerp)
 
@@ -97,9 +125,15 @@
             }
 
             async function onUpButton() {
-                res = await fetch("/querydata?first=" + arr[0].publishedAt);
+                qpam = ''
+                if(arr.length > 0) {
+                    qpam = arr[0].publishedAt;
+                } else {
+                    location.reload();
+                    return;
+                }
+                res = await fetch("/querydata?first=" + qpam);
                 jres = await res.json()
-                console.log(jres)
                 alls = document.getElementById("allvids");
                 for(var i = jres.length - 1; i > -1; i--) {
                     ele = createEle(jres[i])
@@ -110,15 +144,38 @@
             }
 
             async function onDownButton() {
-                res = await fetch("/querydata?last=" + arr[arr.length - 1].publishedAt);
+                qpam = ''
+                if(arr.length > 0) {
+                    qpam = arr[arr.length - 1].publishedAt;
+                } else {
+                    location.reload();
+                    return;
+                }
+                res = await fetch("/querydata?last=" + qpam);
                 jres = await res.json()
-                console.log(jres)
                 alls = document.getElementById("allvids");
                 for(var i = 0; i < jres.length; i++) {
                     ele = createEle(jres[i])
                     alls.appendChild(ele);
                     arr.push(jres[i])
                 }
+                populateStats();
+            }
+
+            async function changeSearchTerm() {
+                txt = document.getElementById("changesearchterm").value;
+                if(txt.length < 3) {
+                    return;
+                }
+                await fetch("/changesearch", {
+                    method: "POST",
+                    body: txt,
+                })
+                document.getElementById("changesearchterm").value = '';
+                arr = []
+                alls = document.getElementById("allvids");
+                alls.innerHTML = '';
+                populateArr();
                 populateStats();
             }
 
