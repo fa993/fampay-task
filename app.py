@@ -3,7 +3,6 @@ from pymongo import MongoClient
 import pymongo
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime, timezone, timedelta
 from dateutil.parser import *
 import poptask
 import os
@@ -58,6 +57,7 @@ def changesearchterm():
     if len(str(request.data)) >= 2:
         poptask.src_term = request.data
         poptask.create_collection()
+        poptask.act = 6
         return Response(status=200)
     else:
         return Response(status=400)

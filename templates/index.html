@@ -2,7 +2,7 @@
     <head>
         <title>YTSync</title>
         <style>
-            .video {
+            div {
                 text-align: center;
             }
             img {
@@ -18,14 +18,30 @@
     <body>
         <div id="stats"></div>
         <div id="upbutton"></div>
-        <div class="vids">
+        <div class="vids" id="allvids">
             {% for each in out %}
             {% include "vid.html" %}
             {% endfor %}
         </div>
         <div id="downbutton"></div>
         <script type="text/javascript">
-            
+            function populateStats() {
+                
+            }
+
+            function createAndPutInDOM(arr) {
+                for(i in arr) {
+                    
+                }
+            }
+
+            function onUpButton() {
+
+            }
+
+            function onDownButton() {
+
+            }
         </script>
     </body>
 </html>
