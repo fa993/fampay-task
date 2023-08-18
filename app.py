@@ -16,11 +16,19 @@ db = client.ytsc
 vids = db[poptask.src_term+"vids"]
 
 sched = BackgroundScheduler(daemon=True)
-# sched.add_job(poptask.exec_sche, "interval", minutes=6)
-sched.add_job(poptask.exec_sche_urg, 'interval', seconds=10)
+# sched.add_job(poptask.exec_sche, "interval", minutes=10)
+# sched.add_job(poptask.exec_sche_urg, 'interval', seconds=10)
 sched.start()
 
 app = Flask(__name__)
+
+
+@app.route("/")
+def dashboard():
+    # poptask.act = 6
+    out = list(vids.find({}, {"_id": 0}).sort(
+        'publishedAt', pymongo.DESCENDING).limit(10))
+    return render_template("index.html", out=out)
 
 
 @app.route("/querydata")
@@ -43,14 +51,6 @@ def qdata():
         response=json.dumps(out),
         mimetype='application/json'
     )
-
-
-@app.route("/")
-def dashboard():
-    # poptask.act = 6
-    out = list(vids.find({}, {"_id": 0}).sort(
-        'publishedAt', pymongo.DESCENDING).limit(10))
-    return render_template("index.html", out=out)
 
 
 @app.route("/changesearch", methods=['POST'])

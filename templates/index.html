@@ -1,14 +1,31 @@
 <html>
     <head>
         <title>YTSync</title>
+        <style>
+            .video {
+                text-align: center;
+            }
+            img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .vids {
+                margin-top: 20px;
+            }
+        </style>
     </head>
     <body>
-        {% for each in out %}
-        <div>
-            {{ each["title"]}}
-            <br>
-            <img src='{{each["thumbnail"]}}' />  
+        <div id="stats"></div>
+        <div id="upbutton"></div>
+        <div class="vids">
+            {% for each in out %}
+            {% include "vid.html" %}
+            {% endfor %}
         </div>
-        {% endfor %}
+        <div id="downbutton"></div>
+        <script type="text/javascript">
+            
+        </script>
     </body>
 </html>

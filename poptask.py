@@ -14,6 +14,9 @@ src_term = os.environ["YT_QUERY"]
 client = MongoClient(host=os.environ["DB_URI"])
 db = client.ytsc
 
+keys = map(lambda x: x.strip(), os.environ["API_KEY"].split(","))
+counter = 0
+
 
 def create_collection():
     global vids
@@ -44,12 +47,13 @@ act = 1
 
 def exec_sche():
     global doing
+    global counter
     doing = 1
     ts = (datetime.now(timezone.utc) -
           timedelta(hours=1)).astimezone().isoformat()
 
     payload = {"part": "snippet", "maxResults": 25,
-               "q": src_term, "key": os.environ["API_KEY"],
+               "q": src_term, "key": keys[counter],
                "type": "video", "order": "date",
                "publishedAfter": ts}
 
@@ -68,6 +72,7 @@ def exec_sche():
         pass
     print("Finished exec")
     logging.info("Scheduled Insert Finished")
+    counter = (counter + 1) % len(keys)
     doing = 0
 
 

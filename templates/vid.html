@@ -1,0 +1,16 @@
+<div class="video">
+    <h2>{{ each["title"]}}</h2>
+    
+    <img src='{{each["thumbnail"]}}' alt="thumbnail" width="20%"/>  
+    <p>
+        <h4>Description:</h4>
+        <p>
+            {{ each["description"]}}
+        </p>
+        <h4>Published At:</h4>
+        <p>
+            {{each["publishedAt"]}}
+        </p>    
+    </p>
+    <hr width="50%">
+</div>
