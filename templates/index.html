@@ -148,8 +148,11 @@
                 if(arr.length > 0) {
                     qpam = arr[arr.length - 1].publishedAt;
                 } else {
-                    location.reload();
-                    return;
+                    dt = new Date()
+                    dt.setMinutes(dt.getMinutes() - 30)
+                    dt  = dt.toISOString().replace("T", " ").replace("Z", " ");
+                    dt = dt.substring(0, dt.indexOf("."))
+                    qpam = dt;
                 }
                 res = await fetch("/querydata?last=" + qpam);
                 jres = await res.json()
