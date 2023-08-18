@@ -83,6 +83,17 @@
                 imgt.setAttribute("width", "20%")
                 topl.appendChild(imgt);
 
+                outerp = document.createElement("p")
+
+
+                topl.appendChild(outerp)
+
+                hrt = document.createElement("hr")
+                hrt.setAttribute("width", "50%")
+
+                topl.appendChild(hrt)
+
+                return topl;
             }
 
             async function onUpButton() {
@@ -98,8 +109,17 @@
                 populateStats();
             }
 
-            function onDownButton() {
-
+            async function onDownButton() {
+                res = await fetch("/querydata?last=" + arr[arr.length - 1].publishedAt);
+                jres = await res.json()
+                console.log(jres)
+                alls = document.getElementById("allvids");
+                for(var i = 0; i < jres.length; i++) {
+                    ele = createEle(jres[i])
+                    alls.appendChild(ele);
+                    arr.push(jres[i])
+                }
+                populateStats();
             }
 
             populateArr();

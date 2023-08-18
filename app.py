@@ -37,13 +37,15 @@ def qdata():
     length = request.args.get("length", default=10)
     out = []
     if request.args.get("last") != None:
-        out = list(vids.find({"publishedAt": {"$lt": parse(request.args.get("last"))}}, {"_id": 0}).sort(
+        ts = parse(request.args.get("last"))
+        ts = ts.replace(tzinfo=timezone.utc)
+        out = list(vids.find({"publishedAt": {"$lt": ts}}, {"_id": 0}).sort(
             'publishedAt', pymongo.DESCENDING).limit(length))
         pass
     elif request.args.get("first") != None:
         ts = parse(request.args.get("first"))
         ts = ts.replace(tzinfo=timezone.utc)
-        out = list(vids.find({"publishedAt": {"$gt": parse(request.args.get("first"))}}, {"_id": 0}).sort(
+        out = list(vids.find({"publishedAt": {"$gt": ts}}, {"_id": 0}).sort(
             'publishedAt', pymongo.DESCENDING).limit(length))
         pass
     else:
