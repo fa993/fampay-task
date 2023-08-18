@@ -1,0 +1,5 @@
+.env
+__*
+.venv
+.vscode
+.DS_Store
